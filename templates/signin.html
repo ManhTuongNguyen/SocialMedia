@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <div id="wrapper" class="flex flex-col justify-between h-screen">
+
+        <!-- header-->
+        <div class="bg-white py-4 shadow dark:bg-gray-800">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex items-center lg:justify-between justify-around">
+
+                    <a href="#">
+                        <b><h1 style="font-size: 1.5rem;">Social Book</h1></b>
+                    </a>
+
+                    <div class="capitalize flex font-semibold hidden lg:block my-2 space-x-3 text-center text-sm">
+
+                        <a href="{% url 'core:sign_up' %}" onmouseover="this.style.color='orange';"
+                           onmouseout="this.style.color='white';"
+                           class="bg-pink-500 pink-500 px-6 py-3 rounded-md shadow text-white">Đăng ký</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Content-->
+        <div>
+            <div class="lg:p-12 max-w-md max-w-xl lg:my-0 my-12 mx-auto p-6 space-y-">
+                <h1 class="lg:text-3xl text-xl font-semibold  mb-6">Đăng nhập</h1>
+
+                <form action="{% url 'core:sign_in' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="text" name="username" placeholder="Tên tài khoản"
+                           class="bg-gray-200 mb-2 shadow-none dark:bg-gray-800"
+                           style="border: 1px solid #d3d5d8 !important;">
+                    <input type="password" name="password" placeholder="Mật khẩu"
+                           class="bg-gray-200 mb-2 shadow-none dark:bg-gray-800"
+                           style="border: 1px solid #d3d5d8 !important;">
+                    <div class="flex justify-between my-4">
+                        <a href="{% url 'core:forget-password' %}" class="hover:text-red-500">Quên mật khẩu? </a>
+                    </div>
+                    <button type="submit"
+                            class="bg-gradient-to-br from-pink-500 py-3 rounded-md text-white text-xl to-red-400 w-full">
+                        Đăng nhập
+                    </button>
+                    <div class="text-center mt-5 space-x-2">
+                        <p class="text-base">Chưa có tài khoản?
+                            <a href="{% url 'core:sign_up' %}" class="hover:text-red-500">Tạo tài khoản mới.
+                            </a>
+                        </p>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+
+        <div class="lg:mb-5 py-3 uk-link-reset">
+            <div class="flex flex-col items-center justify-between lg:flex-row max-w-6xl mx-auto lg:space-y-0 space-y-3">
+                <div class="flex space-x-2 text-gray-700 uppercase">
+                    <a href="https://github.com/ManhTuongNguyen" class="hover:text-red-500">Giới thiệu</a>
+                    <a href="" class="hover:text-red-500">Trợ giúp</a>
+                    <a href="" class="hover:text-red-500">Điều khoản</a>
+                    <a href="{% url 'app_email:feedback' %}" class="hover:text-red-500">Đóng góp ý kiến</a>
+                </div>
+                <p class="capitalize">© Mạnh Tường Nguyễn</p>
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}

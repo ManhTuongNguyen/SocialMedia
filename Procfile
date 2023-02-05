@@ -1,0 +1,1 @@
+web gunicorn SocialMediaProject.wsgi:application --log-file -

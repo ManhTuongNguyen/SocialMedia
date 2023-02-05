@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container m-auto">
+        <h1 class="text-2xl leading-none text-gray-900 tracking-tight mt-3">
+            <a href="{% url 'core:index' %}">Trang chủ</a> / Thiết lập tài khoản cho <b>{{ user.username }}</b></h1>
+        <ul class="mt-5 -mr-3 flex-nowrap lg:overflow-hidden overflow-x-scroll uk-tab">
+            <li class=""><a href="{% url 'core:setting-general' %}">Chung</a></li>
+            <li class="uk-active"><a href="{% url 'core:setting-secure' %}">Bảo mật</a></li>
+        </ul>
+        <div class="grid lg:grid-cols-3 mt-12 gap-8">
+            <div>
+                <h3 class="text-xl mb-2"></h3>
+                <p></p>
+            </div>
+            <div class="bg-white rounded-md lg:shadow-lg shadow col-span-2">
+
+                <form action="{% url 'core:setting-secure' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
+                        <div class="col-span-2">
+                            <label for="">Mật khẩu cũ</label>
+                            <input type="password" name="old_password" class="shadow-none bg-gray-100 password">
+                        </div>
+                        <div class="col-span-2">
+                            <label for="">Mật khẩu mới</label>
+                            <input type="password" name="new_password" class="shadow-none bg-gray-100 password">
+                        </div>
+                        <div class="col-span-2">
+                            <label for="">Nhập lại mật khẩu mới</label>
+                            <input type="password" name="re_password" class="shadow-none bg-gray-100 password">
+                        </div>
+                        <div>Hiển thị mật khẩu
+                            <input style="height: 15px; width: 15px;" type="checkbox" onclick="showPassword()">
+                        </div>
+
+                    </div>
+
+                    <div class="bg-gray-10 p-6 pt-0 flex justify-end space-x-3">
+                        <button class="p-2 px-4 rounded bg-gray-50 text-red-500"><a href="{% url 'core:index' %}">Hủy
+                            bỏ</a></button>
+                        <button type="submit" class="button bg-blue-700"> Lưu</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <br>
+    </div>
+{% endblock %}

@@ -1,0 +1,218 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <title>{{ title }}</title>
+
+    <link rel="stylesheet" href="{% static 'css/min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/color.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.min.css' %}">
+</head>
+<body>
+<div class="theme-layout">
+
+</div>
+
+<section>
+    <div class="feature-photo">
+        <div style="max-width: 100%; max-height: 445px; min-height: 200px; align-items: center; justify-content: center; display: flex">
+            <img src="{{ user_profile.cover_img.url }}">
+        </div>
+        <form action="{% url 'core:follow' %}" method="POST">
+            {% csrf_token %}
+            <div class="add-btn" style="display: flex; width: 78%; float: left">
+                <span style="color: white; font-size: 27px; width: 20%; float: left"><b><u><a
+                        href="/">Trang chủ</a></u></b></span>
+                <div style="width: 80%; float: right; display: flex; justify-content: flex-end;">
+                    {% if user_post_length == 0 %}
+                        <span style="color: white; font-size: 27px; margin-left: 25px"><b>Chưa có bài viết nào</b></span>
+                    {% else %}
+                        <span style="color: white; font-size: 27px; margin-left: 25px"><b>{{ user_post_length }} bài viết</b></span>
+                    {% endif %}
+
+                    <span style="color: white; font-size: 27px; margin-left: 25px"><b>{{ user_followers }} người theo dõi</b></span>
+
+                    <span style="color: white; font-size: 27px; margin-left: 25px"><b>{{ user_following }} đang theo dõi</b></span>
+
+                    <input type="hidden" value="{{ user.username }}" name="follower"/>
+                    <input type="hidden" value="{{ user_object.username }}" name="user"/>
+
+                    {% if user_object.username == user.username %}
+                        <a href="{% url 'core:setting-general' %}" data-ripple="">
+                            <button type="button"
+                                    style="background-color: #ffc0cb; border: #ffc0cb; margin-left: 25px; border-radius: 10px">
+                                Thiết lập thông tin cá
+                                nhân
+                            </button>
+                        </a>
+                    {% else %}
+                        <a data-ripple="" style="margin-left: 25px; width: 90px">
+                            <button type="submit"
+                                    style="background-color: #ffc0cb; border: #ffc0cb; border-radius: 10px;">{{ button_text }}</button>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+        <div class="container-fluid">
+            <div class="row merged">
+                <div class="col-lg-2 col-sm-3">
+                    <div>
+                        <figure>
+                            <img class="user-avatar" src="{{ user_profile.profileimg.url }}" style="height: 250px; width: auto;" alt="">
+                        </figure>
+                    </div>
+                </div>
+                <div class="col-lg-10 col-sm-9">
+                    <div class="timeline-info">
+                        <ul>
+                            <li class="admin-name">
+                                <h5 style="color: #fa6868;white-space: nowrap; width: 110px; font-size: 1.6em;">
+                                    {% load core_extras %}
+                                    <b>{{ user_profile|get_custom_name_profile }}</b>
+                                </h5>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section><!-- top area -->
+<section>
+    <div class="bio">
+        {{ user_profile.bio }}
+    </div>
+</section>
+
+<section>
+    <div class="gap gray-bg">
+        <div class="container-fluid">
+            <div class="row">
+                {% for post in user_posts %}
+                    <div class="col-lg-12">
+                        <div class="row" id="page-contents" ;>
+                            <div class="col-lg-3">
+                                <aside class="sidebar static">
+
+
+                                </aside>
+                            </div><!-- sidebar -->
+
+
+                            <div class="col-lg-6">
+                                <div class="central-meta">
+                                    <div style="display: flex">
+                                        <div style="display: inline-block; font-size: 1.2em; color: #000">
+                                            {% if post.caption|is_youtube_link %}
+                                                <iframe width="700px" height="400px"
+                                                        src="https://www.youtube.com/embed/{{ post.caption|get_youtube_id }}"
+                                                        title="YouTube video player" frameborder="0"
+                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                        allowfullscreen></iframe>
+                                            {% else %}
+                                                <p style="margin: 8px">
+                                                    {{ post.caption|slice:":30" }}
+                                                    {% if post.caption|length > 30 %}
+                                                        .....
+                                                    {% endif %}
+                                                </p>
+                                            {% endif %}
+
+                                            <div style="color: #8282ef; font-size: 0.8em">
+                                                <a href="{% url 'core:post_details' post.id %}"><u>Xem chi tiết</u></a>
+                                            </div>
+                                        </div>
+                                        <div style="display: contents; font-size: 0.8em;">
+                                            &nbsp;&nbsp;&nbsp;({{ post.created|date:"d/m/Y G:i" }})
+                                        </div>
+                                    </div>
+                                    {% if post.image %}
+                                        <a href="{{ post.image.url }}">
+                                            <img src="{{ post.image.url }}" alt="">
+                                        </a>
+                                    {% endif %}
+
+                                    <div>
+                                        {% if post|is_liked_post:username %}
+                                            <form action="{% url 'core:like_post' %}" method="post">
+                                                <button type="button" style="object-fit: contain"
+                                                        id="like_btn_{{ post.id }}"
+                                                        onclick="sendata(this.id)">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                         fill="currentColor"
+                                                         width="25" height="25" class="text-blue-500"
+                                                         id="like_icon_{{ post.id }}">
+                                                        <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <form action="{% url 'core:like_post' %}" method="post">
+                                                <button type="button" style="object-fit: contain"
+                                                        id="like_btn_{{ post.id }}"
+                                                        onclick="sendata(this.id)">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                         fill="currentColor"
+                                                         width="25" height="25" class="" id="like_icon_{{ post.id }}">
+                                                        <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                        {% if post.no_of_likes == 0 %}
+                                            <p id="like_count_{{ post.id }}">Hãy là người đầu tiên thích bài viết
+                                                này!</p>
+                                        {% else %}
+                                            <p id="like_count_{{ post.id }}">Có {{ post.no_of_likes }} người thích bài
+                                                viết này.</p>
+                                        {% endif %}
+                                    </div>
+
+                                </div><!-- photos -->
+                            </div><!-- centerl meta -->
+                            <div class="col-lg-3">
+                                <aside class="sidebar static">
+
+                                </aside>
+                            </div><!-- sidebar -->
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-lg-12">
+                        <div class="row" id="page-contents" ;>
+
+                            <div class="col-lg-3">
+                                <aside class="sidebar static">
+                                </aside>
+                            </div>
+
+                            <div class="col-lg-6">
+
+                                <div class="central-meta" style="margin: 100px">
+                                    {{ user_profile|get_custom_name_profile }} chưa có bài viết nào!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+<script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/custom.js' %}"></script>
+</body>
+</html>

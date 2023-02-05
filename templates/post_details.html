@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% block content %}
+    <header>
+        <div class="header_inner">
+            <div class="left-side">
+                <!-- Logo -->
+                <div id="logo" class=" uk-hidden@s">
+                    <a href="/">
+                        <!-- <b><h1 style="text-transform: uppercase;">Social Book</h1></b> -->
+                    </a>
+                </div>
+                <form action="{% url 'core:search' %}" method="post" style="display: flex;">
+                    {% csrf_token %}
+                    <input type="text" name="search_username" placeholder="Tìm kiếm...">&nbsp; &nbsp;
+                    <button type="submit"><i class="fa fa-search fa-1x"></i></button>
+                </form>
+
+            </div>
+            <div class="right-side lg:pr-4">
+                <a href="{% url 'core:index' %}" class="uk-text-bold"><b name="" class="">Trang chủ&nbsp; &nbsp;
+                    &nbsp;</b>
+                </a>
+
+                <!-- profile -->
+                <a href="#">
+                    <img src="{{ user_profile.profileimg.url }}" class="header-avatar" alt="">
+                </a>
+                <div uk-drop="mode: click;offset:9" class="header_dropdown profile_dropdown border-t">
+                    <ul>
+                        <li><a href="{% url 'core:profile' username %}">Trang cá nhân</a></li>
+                        <li><a href="{% url 'core:setting-general' %}">Thiết lập tài khoản</a></li>
+                        <li><a href="{% url 'core:log_out' %}">Đăng xuất</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+
+    <div class="lg:flex justify-center lg:space-x-10 lg:space-y-0 space-y-5" style="margin-top: 20px">
+        <div class="space-y-5 flex-shrink-0 lg:w-7/12">
+            <div class="bg-white shadow rounded-md  -mx-2 lg:mx-0">
+                <!-- post header-->
+                <div class="flex justify-between items-center px-4 py-3">
+                    <div class="flex flex-1 items-center space-x-4">
+                        <!-- <a href="#">
+                            <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">
+                                <img src="" class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                            </div>
+                        </a> -->
+                        <span class="block font-semibold ">
+                                {% load core_extras %}
+                                <a href="{% url 'core:profile' post.user %}">{{ post|get_custom_name_post }}</a>
+                            </span>
+                        <span style="font-size: 0.8em">{{ post.created|date:"d/m/Y G:i" }}</span>
+                    </div>
+                    <div>
+                        <a href="#"> <i
+                                class="icon-feather-more-horizontal text-2xl hover:bg-gray-200 rounded-full p-2 transition -mr-1 "></i>
+                        </a>
+                        {% if edit %}
+                            <div class="bg-white w-56 shadow-md mx-auto p-2 mt-12 rounded-md text-gray-500 hidden text-base border border-gray-100  "
+                                 uk-drop="mode: hover;pos: top-right" style="width: 163px">
+
+                                <ul class="space-y-1">
+                                    <li>
+                                        <form action="{% url 'core:delete_post' %}" method="post">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="post_id" , value="{{ post.id }}">
+                                            <input type="hidden" name="user_profile" value="{{ user_profile.user }}">
+                                            <button type="submit"
+                                                    class="flex items-center px-3 py-2 text-red-500 hover:bg-red-100 hover:text-red-500 rounded-md ">
+                                                <div style="width: 120px">
+                                                    <i class="uil-trash-alt mr-1"></i> Xóa bài viết
+                                                </div>
+                                            </button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'core:edit_post' %}?post_id={{ post.id }}"
+                                           class="flex items-center text-red-500 hover:bg-red-100
+                                                hover:text-red-500 px-3 py-2  rounded-md" style="cursor: pointer">
+                                            <button>
+                                                <i class="icon-feather-edit mr-1"></i>
+                                                Chỉnh sửa
+                                            </button>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if post.caption|is_youtube_link %}
+                    <iframe width="75%" height="300px"
+                            src="https://www.youtube.com/embed/{{ post.caption|get_youtube_id }}"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen style="margin-left: 40px"></iframe>
+                {% else %}
+                    <p style="margin: 8px">
+                        {{ post.caption }}
+                    </p>
+                {% endif %}
+                {% if post.image %}
+                    <a href="{{ post.image.url }}">
+                        <div uk-lightbox>
+                            <img src="{{ post.image.url }}" alt="">
+                        </div>
+                    </a>
+                {% endif %}
+
+
+                <div class="py-3 px-4 space-y-3">
+
+                    <div class="flex space-x-4 lg:font-bold">
+                        <div class="flex items-center space-x-2">
+                            <div class="p-2 rounded-full text-black">
+                                {% load core_extras %}
+                                {% if post|is_liked_post:username %}
+                                    <form action="{% url 'core:like_post' %}" method="post">
+                                        <button type="button" style="object-fit: contain" id="like_btn_{{ post.id }}"
+                                                onclick="sendata(this.id)">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="post_id" value="{{ post.id }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                 fill="currentColor"
+                                                 width="25" height="25" class="text-blue-500"
+                                                 id="like_icon_{{ post.id }}">
+                                                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form action="{% url 'core:like_post' %}" method="post">
+                                        <button type="button" style="object-fit: contain" id="like_btn_{{ post.id }}"
+                                                onclick="sendata(this.id)">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="post_id" value="{{ post.id }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                 fill="currentColor"
+                                                 width="25" height="25" class="" id="like_icon_{{ post.id }}">
+                                                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                                {% if post.no_of_likes == 0 %}
+                                    <p id="like_count_{{ post.id }}">Hãy là người đầu tiên thích bài viết này!</p>
+                                {% else %}
+                                    <p id="like_count_{{ post.id }}">Có {{ post.no_of_likes }} người thích bài viết
+                                        này.</p>
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                        {% if post.image %}
+                            <a href="{{ post.image.url }}"
+                               class="flex items-center space-x-2 flex-1 justify-end" download>
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+                                     width="25" height="25" preserveAspectRatio="xMidYMid meet"
+                                     viewBox="0 0 16 16">
+                                    <g fill="currentColor">
+                                        <path d="M8.5 1.5A1.5 1.5 0 0 1 10 0h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h6c-.314.418-.5.937-.5 1.5v6h-2a.5.5 0 0 0-.354.854l2.5 2.5a.5.5 0 0 0 .708 0l2.5-2.5A.5.5 0 0 0 10.5 7.5h-2v-6z"/>
+                                    </g>
+                                </svg>
+
+                            </a>
+                        {% endif %}
+                    </div>
+                    <!-- Comment   -->
+                    <div class="border-t pt-4 space-y-4 ">
+                        {% for comment in comments %}
+                            <div style="display: flex;">
+                                <div class="rounded-full relative flex-shrink-0">
+                                    <a style="display: inline-block" class="font-semibold"
+                                       href="{% url 'core:profile' comment.user %}">
+                                        {{ comment|get_custom_name_comment }}:
+                                    </a>
+                                </div>
+                                <div style="display: inline-block"
+                                     class="text-gray-700 py-2 px-3 rounded-md bg-gray-100 h-full relative lg:ml-5 ml-2 lg:mr-20">
+
+                                    {% if username == comment.user %}
+                                        <a href="#">
+                                            <p class="leading-6 hover:text-red-400">{{ comment.comment_content }}</p>
+                                        </a>
+                                        <div uk-drop="mode: click;offset:9" style="padding-top: 10px"
+                                             class="header_dropdown profile_dropdown border-t">
+                                            <ul>
+                                                <li>
+                                                    <form action="{% url 'core:edit_comment' %}" method="get">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                                        <button class="hover:text-red-400" type="submit">Chỉnh sửa bình
+                                                            luận
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                                <li>
+                                                    <form action="{% url 'core:delete_comment' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                                        <button class="hover:text-red-400" type="submit">Xóa bình luận
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    {% else %}
+                                        <p class="leading-6">{{ comment.comment_content }}</p>
+                                    {% endif %}
+
+
+                                    <div class="absolute w-3 h-3 top-3 -left-1 bg-gray-100 transform rotate-45 "></div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div>
+                                <div class="rounded-full relative flex-shrink-0">
+                                    <p>Bài biết chưa có bình luận nào. Bình luận ngay nhé!</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <form action="{% url 'core:post_comment' %}" method="post">
+                        {% csrf_token %}
+                        <div class="bg-gray-100 bg-gray-100 rounded-full rounded-md relative ">
+                            <input type="hidden" name="post_id" value="{{ post.id }}">
+                            <input type="hidden" name="user_comment" value="{{ username }}">
+                            <input name="comment" type="text" placeholder="Viết bình luận..."
+                                   class="bg-transparent max-h-10 shadow-none">
+                            <div class="absolute bottom-0 flex h-full items-center right-0 right-3 text-xl space-x-2">
+                                <a href=""> <i class="uil-image"></i></a>
+                                <a href=""> <i class="uil-video"></i></a>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src=""></script>
+{% endblock %}

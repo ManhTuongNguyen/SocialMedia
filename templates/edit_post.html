@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="container m-auto">
+        <h1 class="text-2xl leading-none text-gray-900 tracking-tight mt-3">
+            <a href="{% url 'core:index' %}">Trang chủ</a>
+        </h1>
+        <div class="grid lg:grid-cols-3 mt-12 gap-8">
+            <div>
+                <h3 class="text-xl mb-2"></h3>
+                <p></p>
+            </div>
+            <div class="bg-white rounded-md lg:shadow-lg shadow col-span-2">
+
+                <form action="" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
+
+                        <div class="col-span-2">
+                            <label for="about">Nội dung</label>
+                            <textarea id="about" name="caption" rows="3" class="shadow-none bg-gray-100"
+                                      style="padding: 5px 10px 5px 10px">{{ post.caption }}</textarea>
+                        </div>
+                        <input type="hidden" name="post_id" value="{{ post.id }}">
+
+                        <div class="col-span-2">
+                            <label for="">Ảnh</label>
+                            {% if post.image %}
+                                <img style="max-width: 100%; margin-bottom: 30px" src="{{ post.image.url }}"/>
+                            {% endif %}
+                            <input type="file" name="image" value="" class="shadow-none bg-gray-100">
+                        </div>
+
+                    </div>
+                    <div class="bg-gray-10 p-6 pt-0 flex justify-end space-x-3">
+                        <button class="p-2 px-4 rounded bg-gray-50 text-red-500">
+                            <a href="{% url 'core:post_details' post.id %}">Hủy bỏ</a>
+                        </button>
+                        <button type="submit" class="button bg-blue-700"> Lưu</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <br>
+    </div>
+{% endblock %}

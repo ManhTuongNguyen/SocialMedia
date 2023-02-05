@@ -1,0 +1,6 @@
+**.pyc
+envs
+__pycache__
+**/__pycache__/**
+media/profile_images/**
+media/post_images/**
