@@ -35,3 +35,10 @@ To get a local copy up and running follow these simple example steps.
     ```
     py manage.py runserver
     ```
+    
+    
+ ## Images from this project
+![Pic1](./images/image_1.png?raw=true)
+![Pic2](./images/image_2.png?raw=true)
+![Pic3](./images/image_3.png?raw=true)
+![Pic4](./images/image_4.png?raw=true)
