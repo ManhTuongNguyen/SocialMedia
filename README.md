@@ -35,7 +35,11 @@ To get a local copy up and running follow these simple example steps.
     ```
     py manage.py runserver
     ```
-    
+
+### To use function send email
+1. Go to file `email_service.py` at core/process/email_service.py
+2. In line 12 and 13, replace `username` and `password` by your outlook account
+
     
  ## Images from this project
 ![Pic1](./images/image_1.png?raw=true)
