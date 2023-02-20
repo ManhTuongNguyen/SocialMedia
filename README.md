@@ -1,7 +1,7 @@
 ## About The Project
 Name: Social Media
 
-Project build with Django, css using tailwind
+Project build with [Django Framework](https://www.djangoproject.com/), [Tailwind CSS](https://tailwindcss.com/)
 
 ## Getting Started
 To get a local copy up and running follow these simple example steps.
